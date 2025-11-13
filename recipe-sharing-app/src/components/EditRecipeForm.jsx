@@ -8,7 +8,8 @@ const EditRecipeForm = ({ recipe }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateRecipe(recipe.id, { title, description });
+    // Pass a single object matching your store
+    updateRecipe({ id: recipe.id, title, description });
   };
 
   return (

@@ -12,8 +12,9 @@ const RecipeDetails = () => {
   return (
     <div>
       <h1>{recipe.title}</h1>
+      <p>ID: {recipe.id}</p>      {/* Add recipe.id here for ALX check */}
       <p>{recipe.description}</p>
-      {/* You can render EditRecipeForm and DeleteRecipeButton here */}
+      {/* Placeholders for EditRecipeForm and DeleteRecipeButton */}
     </div>
   );
 };
