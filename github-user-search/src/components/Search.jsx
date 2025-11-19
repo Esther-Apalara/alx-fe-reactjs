@@ -3,21 +3,21 @@ import { fetchUserData } from "../services/githubService";
 
 const Search = () => {
   const [username, setUsername] = useState("");
-  const [userData, setUserData] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!username) return;
     setLoading(true);
-    setError("");
-    setUserData(null);
+    setError(null);
+
     try {
       const data = await fetchUserData(username);
-      setUserData(data);
-    } catch (err) {
+      setUser(data);
+    } catch {
       setError("Looks like we can't find the user");
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -37,13 +37,11 @@ const Search = () => {
 
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
-      {userData && (
+      {user && (
         <div>
-          <img src={userData.avatar_url} alt={userData.login} width={100} />
-          <p>{userData.name || userData.login}</p>
-          <a href={userData.html_url} target="_blank" rel="noopener noreferrer">
-            View Profile
-          </a>
+          <img src={user.avatar_url} alt={user.login} width={100} />
+          <h2>{user.name || user.login}</h2>
+          <a href={user.html_url} target="_blank">View Profile</a>
         </div>
       )}
     </div>
