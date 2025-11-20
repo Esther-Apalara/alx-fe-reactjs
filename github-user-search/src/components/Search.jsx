@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { searchUsers } from "../services/githubService"; // advanced search function
+import { fetchUserData } from "../services/githubService";
 
 const Search = () => {
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("");
   const [minRepos, setMinRepos] = useState("");
-  const [users, setUsers] = useState([]); // array for multiple users
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -15,13 +15,15 @@ const Search = () => {
     setError(null);
 
     try {
-      const data = await searchUsers({ username, location, minRepos });
-      if (data.length === 0) {
-        setError("Looks like we can't find any users");
+      const data = await fetchUserData(username, location, minRepos);
+      if (!data || data.length === 0) {
+        setError("Looks like we can't find any users with these criteria");
+        setUsers([]);
+      } else {
+        setUsers(data);
       }
-      setUsers(data);
     } catch {
-      setError("Looks like we can't find any users");
+      setError("Looks like we can't find any users with these criteria");
       setUsers([]);
     } finally {
       setLoading(false);
@@ -29,8 +31,8 @@ const Search = () => {
   };
 
   return (
-    <div className="p-4">
-      <form onSubmit={handleSubmit} className="mb-4 flex flex-wrap gap-2">
+    <div className="p-6 max-w-4xl mx-auto">
+      <form onSubmit={handleSubmit} className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
         <input
           type="text"
           placeholder="Username"
@@ -52,31 +54,24 @@ const Search = () => {
           onChange={(e) => setMinRepos(e.target.value)}
           className="border p-2 rounded"
         />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+        <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
           Search
         </button>
       </form>
 
       {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {users.map((user) => (
           <div key={user.id} className="border p-4 rounded shadow">
-            <img
-              src={user.avatar_url}
-              alt={user.login}
-              width={100}
-              className="rounded-full mb-2"
-            />
-            <h2 className="font-semibold">{user.login}</h2>
-            {user.location && <p>Location: {user.location}</p>}
-            {user.public_repos !== undefined && <p>Repos: {user.public_repos}</p>}
+            <img src={user.avatar_url} alt={user.login} className="rounded-full w-24 h-24 mb-2 mx-auto"/>
+            <h2 className="text-lg font-semibold text-center">{user.login}</h2>
+            {user.location && <p className="text-sm text-gray-500 text-center">{user.location}</p>}
             <a
               href={user.html_url}
               target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500"
+              className="block text-center mt-2 text-blue-500 hover:underline"
             >
               View Profile
             </a>
