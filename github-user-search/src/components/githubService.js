@@ -1,16 +1,27 @@
 import axios from "axios";
 
+// Definition of global constants for query parameters
+const BASE_URL = "https://api.github.com/search/users?q";
+const LOCATION = "location";
+const MIN_REPOS = "minRepos";
+
+// Function to fetch users with advanced search
 export const fetchUserData = async (username, location = "", minRepos = "") => {
   try {
-    let query = "";
-    if (username) query += `${username}`;
-    if (location) query += `+location:${location}`;
-    if (minRepos) query += `+repos:>=${minRepos}`;
+    // Construct query string for advanced search
+    let query = username;
+    if (location) {
+      query += `+${LOCATION}:${location}`;
+    }
+    if (minRepos) {
+      query += `+repos:>${minRepos}`;
+    }
 
-    const url = `https://api.github.com/search/users?q=${query}`;
+    // Complete URL for API request
+    const url = `${BASE_URL}=${query}`;
 
     const response = await axios.get(url);
-    return response.data.items;
+    return response.data.items; // return array of users
   } catch (error) {
     console.error("Error fetching users:", error);
     throw error;
