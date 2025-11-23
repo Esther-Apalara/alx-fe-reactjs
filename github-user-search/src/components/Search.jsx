@@ -14,20 +14,16 @@ const Search = () => {
     setLoading(true);
     setError(null);
 
-    try {
-      const data = await fetchUserData(username, location, minRepos);
-      if (data.length === 0) {
-        setError("Looks like we can't find the user");
-        setUsers([]);
-      } else {
-        setUsers(data);
-      }
-    } catch {
-      setError("Looks like we can't find the user");
+    const data = await fetchUserData(username, location, minRepos);
+
+    if (!Array.isArray(data) || data.length === 0) {
       setUsers([]);
-    } finally {
-      setLoading(false);
+      setError("Looks like we can't find the user");
+    } else {
+      setUsers(data);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -63,29 +59,30 @@ const Search = () => {
       </form>
 
       {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {users.map((user) => (
-          <div key={user.id} className="border p-4 rounded shadow">
-            <img
-              src={user.avatar_url}
-              alt={user.login}
-              width={100}
-              className="rounded-full mb-2"
-            />
-            <h2>{user.login}</h2>
-            {user.location && <p>Location: {user.location}</p>}
-            <a
-              href={user.html_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500"
-            >
-              View Profile
-            </a>
-          </div>
-        ))}
+        {Array.isArray(users) &&
+          users.map((user) => (
+            <div key={user.id} className="border p-4 rounded shadow">
+              <img
+                src={user.avatar_url}
+                alt={user.login}
+                width={100}
+                className="rounded-full mb-2"
+              />
+              <h2 className="font-bold">{user.login}</h2>
+              {user.location && <p>Location: {user.location}</p>}
+              <a
+                href={user.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500"
+              >
+                View Profile
+              </a>
+            </div>
+          ))}
       </div>
     </div>
   );

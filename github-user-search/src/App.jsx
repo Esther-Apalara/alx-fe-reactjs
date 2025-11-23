@@ -1,12 +1,19 @@
+// src/App.jsx
 import React from "react";
 import Search from "./components/Search";
-import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <h1>GitHub User Search</h1>
-      <Search />
+    <div className="min-h-screen bg-gray-100 p-4">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold text-center">
+          GitHub User Search
+        </h1>
+      </header>
+
+      <main>
+        <Search />
+      </main>
     </div>
   );
 }
