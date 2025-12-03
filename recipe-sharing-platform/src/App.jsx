@@ -1,13 +1,20 @@
+// src/App.js
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./components/HomePage.jsx";
-import RecipeDetail from "./pages/RecipeDetail.jsx"; // we'll create this next
+import HomePage from "./components/HomePage";
+import RecipeDetail from "./components/RecipeDetail";
+import AddRecipeForm from "./components/AddRecipeForm";
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Home page showing all recipes */}
         <Route path="/" element={<HomePage />} />
+        {/* Recipe detail page with dynamic id */}
         <Route path="/recipe/:id" element={<RecipeDetail />} />
+        {/* Add new recipe form page */}
+        <Route path="/add-recipe" element={<AddRecipeForm />} />
       </Routes>
     </Router>
   );
