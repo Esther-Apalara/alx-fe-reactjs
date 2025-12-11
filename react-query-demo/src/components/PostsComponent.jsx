@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 
-// Fetch posts from JSONPlaceholder
+// Function to fetch posts from JSONPlaceholder
 const fetchPosts = async () => {
   const res = await fetch("https://jsonplaceholder.typicode.com/posts");
   if (!res.ok) throw new Error("Network response not ok");
@@ -9,15 +9,21 @@ const fetchPosts = async () => {
 };
 
 export default function PostsComponent() {
-  // ✅ Use `isLoading` and `isError` exactly
-  const { data, isLoading, isError, refetch } = useQuery({
+  // ✅ Include both isError and error
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["posts"],
     queryFn: fetchPosts,
     staleTime: 1000 * 60, // 1 minute caching
   });
 
   if (isLoading) return <div>Loading posts...</div>;
-  if (isError) return <div>Error fetching posts</div>;
+
+  if (isError)
+    return (
+      <div>
+        Error fetching posts: {error.message} {/* ✅ use `error` here */}
+      </div>
+    );
 
   return (
     <div style={{ maxWidth: 600, margin: "20px auto" }}>
@@ -26,8 +32,8 @@ export default function PostsComponent() {
       {/* ✅ Refetch button */}
       <button onClick={() => refetch()}>Refetch Posts</button>
 
-      {/* Display first 10 posts */}
       <ul>
+        {/* Show first 10 posts */}
         {data.slice(0, 10).map((post) => (
           <li key={post.id} style={{ marginBottom: 12 }}>
             <strong>{post.title}</strong>
