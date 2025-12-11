@@ -1,5 +1,5 @@
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "@tanstack/react-query"; // fix for React Query v5? wait use Formik
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 const SignupSchema = Yup.object().shape({
@@ -21,10 +21,13 @@ export default function FormikForm() {
           <Form>
             <Field name="username" placeholder="Username" />
             <ErrorMessage name="username" component="div" />
+
             <Field name="email" type="email" placeholder="Email" />
             <ErrorMessage name="email" component="div" />
+
             <Field name="password" type="password" placeholder="Password" />
             <ErrorMessage name="password" component="div" />
+
             <button type="submit">Register</button>
           </Form>
         )}
