@@ -14,13 +14,13 @@ const Search = () => {
     setLoading(true);
     setError(null);
 
-    const data = await fetchUserData(username, location, minRepos);
+    const results = await fetchUserData(username, location, minRepos);
 
-    if (!Array.isArray(data) || data.length === 0) {
+    if (!Array.isArray(results) || results.length === 0) {
       setUsers([]);
-      setError("Looks like we can't find the user");
+      setError("No users found.");
     } else {
-      setUsers(data);
+      setUsers(results);
     }
 
     setLoading(false);
@@ -28,61 +28,54 @@ const Search = () => {
 
   return (
     <div className="p-4">
-      <form onSubmit={handleSubmit} className="mb-4 grid gap-2 md:grid-cols-4">
+      <form onSubmit={handleSubmit} className="grid gap-2 mb-4">
         <input
           type="text"
-          placeholder="Username"
+          placeholder="Username…"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="border p-2 rounded"
         />
+
         <input
           type="text"
-          placeholder="Location"
+          placeholder="Location…"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           className="border p-2 rounded"
         />
+
         <input
           type="number"
-          placeholder="Min Repos"
+          placeholder="Min Repos…"
           value={minRepos}
           onChange={(e) => setMinRepos(e.target.value)}
           className="border p-2 rounded"
         />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-        >
+
+        <button className="bg-blue-500 text-white p-2 rounded">
           Search
         </button>
       </form>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p>Loading…</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {Array.isArray(users) &&
-          users.map((user) => (
-            <div key={user.id} className="border p-4 rounded shadow">
-              <img
-                src={user.avatar_url}
-                alt={user.login}
-                width={100}
-                className="rounded-full mb-2"
-              />
-              <h2 className="font-bold">{user.login}</h2>
-              {user.location && <p>Location: {user.location}</p>}
-              <a
-                href={user.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500"
-              >
-                View Profile
-              </a>
-            </div>
-          ))}
+      <div className="grid md:grid-cols-3 gap-4">
+        {users.map((user) => (
+          <div key={user.id} className="border p-4 rounded shadow">
+            <img
+              src={user.avatar_url}
+              alt=""
+              className="rounded-full w-20 h-20"
+            />
+            <h2 className="font-bold">{user.login}</h2>
+            <p>Repos: {user.public_repos}</p>
+            <a className="text-blue-500" href={user.html_url} target="_blank">
+              View Profile
+            </a>
+          </div>
+        ))}
       </div>
     </div>
   );
