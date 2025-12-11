@@ -1,30 +1,37 @@
-import axios from "axios";
-
-const BASE_URL = "https://api.github.com/search/users?q=";
-
-// Function to fetch users from GitHub with advanced search
-export const fetchUserData = async (username, location = "", minRepos = "") => {
+export async function fetchUserData(username, location, minRepos) {
   try {
-    if (!username) return []; // Return empty array if username is blank
+    if (!username) return []; // must enter a username
 
     let query = username;
+    if (location) query += `+location:${location}`;
+    if (minRepos) query += `+repos:>${minRepos}`;
 
-    if (location.trim() !== "") {
-      query += `+location:${location}`;
+    const url = `https://api.github.com/search/users?q=${encodeURIComponent(
+      query
+    )}&per_page=5`; // limit results
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      console.error("GitHub API error:", response.status);
+      return [];
     }
 
-    if (minRepos.trim() !== "") {
-      query += `+repos:>${minRepos}`;
-    }
+    const data = await response.json();
 
-    const url = `${BASE_URL}${query}`;
+    if (!data.items || data.items.length === 0) return [];
 
-    console.log("Fetching URL:", url); // Debug URL
+    // fetch full user details
+    const detailedUsers = await Promise.all(
+      data.items.map(async (user) => {
+        const res = await fetch(user.url);
+        return await res.json();
+      })
+    );
 
-    const response = await axios.get(url);
-    return response.data.items || []; // Ensure an array is returned
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    return []; // Return empty array on error
+    return detailedUsers;
+  } catch (err) {
+    console.error("API Error:", err);
+    return [];
   }
-};
+}
