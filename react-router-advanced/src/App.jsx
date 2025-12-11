@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Components
 import Home from "./components/Home.jsx";
@@ -8,20 +8,16 @@ import ProfileDetails from "./components/ProfileDetails.jsx";
 import ProfileSettings from "./components/ProfileSettings.jsx";
 import BlogPost from "./components/BlogPost.jsx";
 import Login from "./components/Login.jsx";
-
-// ✅ ProtectedRoute component
-function ProtectedRoute({ children }) {
-  const isAuthenticated = true; // or fake auth logic
-  return isAuthenticated ? children : <Navigate to="/login" />;
-}
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 export default function App() {
   return (
     <Router>
       <Routes>
+        {/* Public route */}
         <Route path="/" element={<Home />} />
 
-        {/* Protected route */}
+        {/* Protected route with nested routes */}
         <Route
           path="/profile/*"
           element={
@@ -29,11 +25,16 @@ export default function App() {
               <Profile />
             </ProtectedRoute>
           }
-        />
+        >
+          {/* Nested routes inside Profile */}
+          <Route path="details" element={<ProfileDetails />} />
+          <Route path="settings" element={<ProfileSettings />} />
+        </Route>
 
-        {/* Dynamic route for checker */}
+        {/* Dynamic route */}
         <Route path="/blog/:id" element={<BlogPost />} />
 
+        {/* Login route */}
         <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
